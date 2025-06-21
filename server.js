@@ -31,6 +31,7 @@ server.on('connection', (ws, req) => {
     message: 'Bienvenido a virdevs chat!, escribe tus mensajes y presiona <enter>'
   }));
 
+
   broadcast({
     type: 'system',
     message: `Usuario se ha conectado. Total conectados ${clients.length}`

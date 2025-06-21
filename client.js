@@ -29,7 +29,7 @@ ws.on('message', data => {
         console.log(`\n Sistema: ${message.message}`)
         break;
       case 'message':
-        console.log(`[${message.timestamp} ${message.texto}`)
+        console.log(`[${message.timestamp}]: ${message.texto}`)
         break;
       default:
         console.log(`Mensaje: ${message}`);
