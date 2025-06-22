@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server:dev": "nodemon server.js",
-    "client:dev": "nodemon client.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "server:dev": "nodemon src/server.ts",
+    "client:dev": "nodemon src/client.ts",
+    "test": "jest test/*.test.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +16,11 @@
     "ws": "^8.18.2"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@types/jest": "^30.0.0",
+    "@types/ws": "^8.18.1",
+    "jest": "^30.0.2",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }
