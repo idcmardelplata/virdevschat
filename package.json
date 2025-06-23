@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "server:dev": "nodemon src/server.ts",
     "client:dev": "nodemon src/client.ts",
     "test": "jest test/*.test.ts"
