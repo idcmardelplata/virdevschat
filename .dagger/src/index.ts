@@ -20,23 +20,35 @@ export class Chat {
   /**
    * Build nodejs image with libraries
    */
-  @func()
-  buildImage(source: Directory): Container {
+  // @func()
+  private buildContainer(source: Directory): Container {
     return dag
       .container()
       .from("node:24.2")
       .withDirectory("/code", source)
       .withWorkdir("/code")
+      .withMountedCache("/root/.npm", dag.cacheVolume("node-24.2"))
       .withExec(["npm", "install"])
-
   }
+
+  /**
+   * Transpile project to javascript
+   */
+  @func('transpile')
+  async transpile(source: Directory): Promise<string> {
+    return this
+      .buildContainer(source)
+      .withExec(["npm", "run", "server:dev"])
+      .stdout()
+  }
+
   /**
   * run unittest in the project
   */
   @func('test')
   async unittest(source: Directory): Promise<string> {
     return this
-      .buildImage(source)
+      .buildContainer(source)
       .withExec(["npm", "run", "test"])
       .stdout()
   }
