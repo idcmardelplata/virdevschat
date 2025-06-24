@@ -12,8 +12,9 @@ console.log("Server running at: 8080");
 var clients = [];
 var connections = {};
 server.on('connection', function (ws, req) {
+    var _a;
     // Limitar las conexiones por IP
-    var ip = req.socket.remoteAddress;
+    var ip = (_a = req.socket.remoteAddress) !== null && _a !== void 0 ? _a : ""; //Si es undefined retorna un string vacio.
     connections[ip] = (connections[ip] || 0) + 1;
     if (connections[ip] > 2) {
         ws.close(1008, "Limite de conexiones permitidas");
@@ -39,7 +40,7 @@ server.on('connection', function (ws, req) {
                 type: 'message',
                 texto: mensaje.texto,
                 timestamp: new Date().toLocaleTimeString()
-            });
+            }, undefined);
         }
         catch (err) {
             console.error("Error al procesar mensaje", err);
@@ -56,13 +57,12 @@ server.on('connection', function (ws, req) {
         broadcast({
             type: 'system',
             message: "Usuario se ha desconectado. Total conectados ".concat(clients.length)
-        });
+        }, undefined);
         ws.on('error', function (error) {
             console.error("Error en el websocket", error);
         });
     });
     function broadcast(mensaje, excluir) {
-        if (excluir === void 0) { excluir = null; }
         var msgJson = JSON.stringify(mensaje);
         console.log(msgJson);
         clients.forEach(function (client) {
