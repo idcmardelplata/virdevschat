@@ -1,0 +1,33 @@
+{
+  "name": "chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf ./dist",
+    "lint": "eslint . --ext .ts",
+    "client": "node dist/client.js",
+    "client:dev": "nodemon src/client.ts",
+    "test": "jest test/*.test.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "ws": "^8.18.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.29.0",
+    "@types/jest": "^30.0.0",
+    "@types/ws": "^8.18.1",
+    "eslint": "^9.29.0",
+    "globals": "^16.2.0",
+    "jest": "^30.0.2",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.35.0"
+  }
+}

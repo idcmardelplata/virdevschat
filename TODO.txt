@@ -1,2 +1,9 @@
-1. Falta configurar el directorio de build para que la salida sea ahi.
+- [x] Falta configurar el directorio de build para que la salida sea ahi.
+- [x] Dividir el proyecto en 2 (cliente y servidor)
+- [x] Agregar server como servicio dentro de dagger para poder probar el cliente
+- [x] Eliminar scripts innecesarios en el package.json
+- []  Mejorar scripts en el package.json
+- []  agregar un readme con las instrucciones necesarias para hacer funcionar el proyecto
+- []  crear un script en el root del proyecto que permita disparar todas las acciones de dagger
+
 
