@@ -2,8 +2,7 @@
 - [x] Dividir el proyecto en 2 (cliente y servidor)
 - [x] Agregar server como servicio dentro de dagger para poder probar el cliente
 - [x] Eliminar scripts innecesarios en el package.json
-- []  Mejorar scripts en el package.json
-- []  agregar un readme con las instrucciones necesarias para hacer funcionar el proyecto
-- []  crear un script en el root del proyecto que permita disparar todas las acciones de dagger
-
+- [x]  Mejorar scripts en el package.json
+- [x]  agregar un readme con las instrucciones necesarias para hacer funcionar el proyecto
+- [x]  crear un script en el root del proyecto que permita levantar tanto el servidor como el cliente
 

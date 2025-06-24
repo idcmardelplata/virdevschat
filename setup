@@ -1,0 +1,120 @@
+#!/bin/bash
+
+# Uso: ./run.sh [--client | --server | --all]
+
+show_help() {
+  echo "Uso: $0 [OPCIÓN]"
+  echo ""
+  echo "Opciones:"
+  echo "  --client    Ejecutar solo el cliente (client/)"
+  echo "  --server    Ejecutar solo el servidor (server/)"
+  echo "  --all       Ejecutar ambos proyectos en paralelo"
+  echo "  --help      Mostrar esta ayuda"
+  echo ""
+  echo "Ejemplos:"
+  echo "  $0 --client"
+  echo "  $0 --server"
+  echo "  $0 --all"
+}
+
+run_client() {
+  echo "🚀 Iniciando cliente..."
+  if [ -d "client" ]; then
+    cd client
+    rm -rf node_modules dist && npm install
+    npm run client
+  else
+    echo "❌ Error: No se encontró el directorio 'client'"
+    exit 1
+  fi
+}
+
+# Función para ejecutar el servidor
+run_server() {
+  echo "🚀 Iniciando servidor..."
+  if [ -d "server" ]; then
+    cd server
+    rm -rf node_modules dist && npm install
+    npm run server
+  else
+    echo "❌ Error: No se encontró el directorio 'server'"
+    exit 1
+  fi
+}
+
+# Función para ejecutar ambos en paralelo
+run_all() {
+  echo "🚀 Iniciando cliente y servidor en paralelo..."
+
+  # Verificar que ambos directorios existan
+  if [ ! -d "client" ]; then
+    echo "❌ Error: No se encontró el directorio 'client'"
+    exit 1
+  fi
+
+  if [ ! -d "server" ]; then
+    echo "❌ Error: No se encontró el directorio 'server'"
+    exit 1
+  fi
+
+  # Ejecutar servidor en segundo plano
+  echo "🔧 Iniciando servidor..."
+
+  (cd server && rm -rf node_modules dist && npm install && npm run server) &
+  SERVER_PID=$!
+
+  # Pequeña pausa para que el servidor inicie
+  sleep 2
+
+  # Ejecutar cliente en segundo plano
+  echo "🔧 Iniciando cliente..."
+  (cd client && rm -rf node_modules dist && npm run client) &
+  CLIENT_PID=$!
+
+  # Función para manejar la interrupción (Ctrl+C)
+  cleanup() {
+    echo ""
+    echo "🛑 Deteniendo procesos..."
+    kill "$SERVER_PID" 2>/dev/null
+    kill "$CLIENT_PID" 2>/dev/null
+    echo "✅ Procesos detenidos"
+    exit 0
+  }
+
+  # Configurar trap para Ctrl+C
+  trap cleanup SIGINT SIGTERM
+
+  echo "✅ Cliente y servidor iniciados"
+  echo "💡 Presiona Ctrl+C para detener ambos procesos"
+
+  # Esperar a que terminen los procesos
+  wait $SERVER_PID $CLIENT_PID
+}
+
+# Procesar argumentos
+case "$1" in
+--client)
+  run_client
+  ;;
+--server)
+  run_server
+  ;;
+--all)
+  run_all
+  ;;
+--help)
+  show_help
+  ;;
+"")
+  echo "❌ Error: Debes especificar una opción"
+  echo ""
+  show_help
+  exit 1
+  ;;
+*)
+  echo "❌ Error: Opción desconocida '$1'"
+  echo ""
+  show_help
+  exit 1
+  ;;
+esac
