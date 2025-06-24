@@ -13,12 +13,13 @@
  * rest is a long description with more detail on the module's purpose or usage,
  * if appropriate. All modules should have a short description.
  */
-import { dag, Directory, object, func, Container } from "@dagger.io/dagger"
+import { dag, Directory, Service, object, func, Container } from "@dagger.io/dagger"
 
 @object()
 export class Chat {
   /**
-   * Build nodejs image with libraries
+   * Build nodejs image with dependencies inside.
+   * This image is build for developer environment only and not should be used in production.
    */
   // @func()
   private buildContainer(source: Directory): Container {
@@ -35,12 +36,42 @@ export class Chat {
    * Transpile project to javascript
    */
   @func('transpile')
-  async transpile(source: Directory): Promise<string> {
+  transpile(source: Directory): Container {
     return this
       .buildContainer(source)
-      .withExec(["npm", "run", "server:dev"])
+      .withExec(["npm", "run", "clean"])
+      .withExec(["npm", "run", "build"])
+  }
+
+  @func('linter')
+  linter(source: Directory): Promise<string> {
+    return this
+      .buildContainer(source)
+      .withExec(["npm", "run", "lint"])
       .stdout()
   }
+
+  /**
+   * Run server as service.
+   */
+  @func('run:server')
+  server(source: Directory): Service {
+    return this
+      .transpile(source)
+      .withExposedPort(8080)
+      .asService({ args: ["node", "dist/server.js"] })
+  }
+
+  /**
+   * Run client 
+   */
+  // @func('run:client')
+  // client(source: Directory): Container {
+  //   return this
+  //     .transpile(source)
+  //     .withServiceBinding("localhost", this.server(source))
+  //     .withExec(["npm", "run", "client"])
+  // }
 
   /**
   * run unittest in the project
