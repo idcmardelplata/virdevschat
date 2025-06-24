@@ -7,7 +7,7 @@
     "build": "tsc",
     "clean": "rm -rf ./dist",
     "lint": "eslint . --ext .ts",
-    "server": "node dist/server.js",
+    "server": "npm run clean && npm run build && node dist/server.js",
     "server:dev": "nodemon src/server.ts",
     "test": "jest test/*.test.ts"
   },
