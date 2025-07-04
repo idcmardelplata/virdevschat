@@ -13,7 +13,7 @@
  * rest is a long description with more detail on the module's purpose or usage,
  * if appropriate. All modules should have a short description.
  */
-import { dag, Directory, Service, object, func, Container } from "@dagger.io/dagger"
+import { dag, Directory, Service, object, func, Container, Secret } from "@dagger.io/dagger"
 
 @object()
 export class Chat {
@@ -50,6 +50,43 @@ export class Chat {
       .withExec(["npm", "run", "lint"])
       .stdout()
   }
+
+  //TODO: Contruir un contenedor para produccion.
+  @func()
+  build_for_production(source: Directory): Container {
+    let baseImage = this.transpile(source)
+    let diskFolder = baseImage.directory("/code/dist")
+    let pkgJson = baseImage.file('package.json')
+
+    return dag
+      .container()
+      .from('node:24-alpine3.21')
+      .withDirectory("/app", diskFolder.withFile("package.json", pkgJson))
+      .withWorkdir("/app")
+      .withExec(["npm", "install", "--omit=dev"])
+      .withExec(["adduser", "-D", "guess"])
+      .withLabel("chatServer", "v0.1")
+      .withExposedPort(8080)
+      .withEntrypoint(["node", "server.js"])
+  }
+
+  //TODO: Publish imagen in a temporal registry
+  @func()
+  async publish(
+    source: Directory,
+    registry: string,
+    username: string,
+    password: Secret
+  ): Promise<string> {
+
+    return await this
+      .build_for_production(source)
+      .withRegistryAuth(registry, username, password)
+      .publish(`${registry}/${username}/serverw`)
+
+  }
+
+
 
   /**
    * Run server as service.
