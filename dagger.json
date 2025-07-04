@@ -4,5 +4,12 @@
   "sdk": {
     "source": "typescript"
   },
+  "dependencies": [
+    {
+      "name": "testcontainers",
+      "source": "github.com/vito/daggerverse/testcontainers@1464b057adc8229e79fcf9ab4b96670517e70a8e",
+      "pin": "1464b057adc8229e79fcf9ab4b96670517e70a8e"
+    }
+  ],
   "source": ".dagger"
 }

@@ -51,7 +51,6 @@ export class Chat {
       .stdout()
   }
 
-  //TODO: Contruir un contenedor para produccion.
   @func()
   build_for_production(source: Directory): Container {
     let baseImage = this.transpile(source)
@@ -70,7 +69,6 @@ export class Chat {
       .withEntrypoint(["node", "server.js"])
   }
 
-  //TODO: Publish imagen in a temporal registry
   @func()
   async publish(
     source: Directory,
@@ -83,7 +81,6 @@ export class Chat {
       .build_for_production(source)
       .withRegistryAuth(registry, username, password)
       .publish(`${registry}/${username}/serverw`)
-
   }
 
 
@@ -99,16 +96,6 @@ export class Chat {
       .asService({ args: ["node", "dist/server.js"] })
   }
 
-  /**
-   * Run client 
-   */
-  // @func('run:client')
-  // client(source: Directory): Container {
-  //   return this
-  //     .transpile(source)
-  //     .withServiceBinding("localhost", this.server(source))
-  //     .withExec(["npm", "run", "client"])
-  // }
 
   /**
   * run unittest in the project
@@ -119,5 +106,23 @@ export class Chat {
       .buildContainer(source)
       .withExec(["npm", "run", "test"])
       .stdout()
+  }
+
+  @func()
+  testendtoend(source: Directory): Promise<string> {
+    return dag
+      .testcontainers()
+      .setup(this.buildContainer(source))
+      .withServiceBinding("chatServer", this.endtoendservice())
+      .withExec(["npm", "run", "test:e2e"])
+      .stdout();
+  }
+
+
+  @func()
+  endtoendservice(): Service {
+    return dag
+      .testcontainers()
+      .dockerService()
   }
 }

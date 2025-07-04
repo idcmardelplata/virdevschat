@@ -5,4 +5,8 @@
 - [x]  Mejorar scripts en el package.json
 - [x]  agregar un readme con las instrucciones necesarias para hacer funcionar el proyecto
 - [x]  crear un script en el root del proyecto que permita levantar tanto el servidor como el cliente
+- [x] crear pruebas de extremo a extremo tanto en local como en CI
 
+features:
+
+[-]: poder crear tópicos en el chat para luego recuperarlos y seguir el hilo de conversación.
