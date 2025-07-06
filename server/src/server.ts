@@ -1,4 +1,5 @@
 import { WebSocket } from 'ws';
+import { sendServerMessage } from './messages';
 
 
 const server = new WebSocket.Server({
@@ -26,17 +27,20 @@ server.on('connection', (ws, req) => {
   console.log(`Nuevo usuario conectado`);
   clients.push(ws);
 
+  ws.send(sendServerMessage("Welcome"));
 
-  ws.send(JSON.stringify({
-    type: 'system',
-    message: 'Bienvenido a virdevs chat!, escribe tus mensajes y presiona <enter>'
-  }));
+  // ws.send(JSON.stringify({
+  //   type: 'system',
+  //   message: 'Bienvenido a virdevs chat!, escribe tus mensajes y presiona <enter>'
+  // }));
 
 
-  broadcast({
-    type: 'system',
-    message: `Usuario se ha conectado. Total conectados ${clients.length}`
-  }, ws); // Excluye a este cliente
+  broadcast(sendServerMessage('Presentation', clients.length), ws);
+
+  // broadcast({
+  //   type: 'system',
+  //   message: `Usuario se ha conectado. Total conectados ${clients.length}`
+  // }, ws); // Excluye a este cliente
 
 
   ws.on('message', (data: any) => {
@@ -69,10 +73,12 @@ server.on('connection', (ws, req) => {
 
     connections[ip]--;
 
-    broadcast({
-      type: 'system',
-      message: `Usuario se ha desconectado. Total conectados ${clients.length}`
-    }, undefined);
+    broadcast(sendServerMessage('Disconnected', clients.length), undefined);
+
+    // broadcast({
+    //   type: 'system',
+    //   message: `Usuario se ha desconectado. Total conectados ${clients.length}`
+    // }, undefined);
 
     ws.on('error', error => {
       console.error(`Error en el websocket`, error);
