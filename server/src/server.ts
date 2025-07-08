@@ -1,4 +1,5 @@
 import { WebSocket } from 'ws';
+import { sendServerMessage } from './message';
 
 
 const server = new WebSocket.Server({
@@ -26,11 +27,12 @@ server.on('connection', (ws, req) => {
   console.log(`Nuevo usuario conectado`);
   clients.push(ws);
 
+  sendServerMessage('Welcome');
 
-  ws.send(JSON.stringify({
-    type: 'system',
-    message: 'Bienvenido a virdevs chat!, escribe tus mensajes y presiona <enter>'
-  }));
+  // ws.send(JSON.stringify({
+  //   type: 'system',
+  //   message: 'Bienvenido a virdevs chat!, escribe tus mensajes y presiona <enter>'
+  // }));
 
 
   broadcast({
@@ -69,9 +71,12 @@ server.on('connection', (ws, req) => {
 
     connections[ip]--;
 
+
+
+
     broadcast({
       type: 'system',
-      message: `Usuario se ha desconectado. Total conectados ${clients.length}`
+      message: sendServerMessage('Disconnected', clients.length)
     }, undefined);
 
     ws.on('error', error => {
