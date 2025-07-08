@@ -1,5 +1,5 @@
 import { WebSocket } from 'ws';
-import ConnectionManager from 'connectionManager';
+import ConnectionManager from './connectionManager';
 
 
 const server = new WebSocket.Server({
@@ -33,11 +33,11 @@ server.on('connection', (ws, req) => {
   ws.on('close', () => {
     console.log(`Cliente desconectado`);
     manager.remove(ws);
-
-
-    ws.on('error', error => {
-      console.error(`Error en el websocket`, error);
-    });
-
   });
+
+
+  ws.on('error', error => {
+    console.error(`Error en el websocket`, error);
+  });
+
 });
