@@ -18,5 +18,9 @@
   "include": [
     "src/*.ts",
     "src/**/*.ts",
+    "src/core/**/*.ts"
   ],
+  "files": [
+    "src/server.ts"
+  ]
 }

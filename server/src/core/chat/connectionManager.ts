@@ -28,8 +28,8 @@ export default class ConnectionManager {
   broadcast(message: {}) {
     let parsedMsg = JSON.stringify(message);
     for (const client of this.clients) {
+      client.send(parsedMsg);
       if (client.readyState === WebSocket.OPEN) {
-        client.send(parsedMsg);
       }
     }
   }

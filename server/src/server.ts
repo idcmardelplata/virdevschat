@@ -1,24 +1,35 @@
 import { WebSocket } from 'ws';
-import ConnectionManager from './connectionManager';
+import ConnectionManager from './core/chat/connectionManager';
 import { OpenFeature } from '@openfeature/server-sdk';
 import { FlagdProvider } from '@openfeature/flagd-provider';
+import { ChatServer } from './core/chat';
 
 try {
-  OpenFeature.setProviderAndWait(new FlagdProvider());
+  OpenFeature.setProviderAndWait(new FlagdProvider({
+    port: 8013
+  }));
 } catch (error) {
   console.error(`Failed to initialize FlagdProvider: ${error}`);
 }
 
 const client = OpenFeature.getClient();
-const refactoring_server = client.getBooleanValue('refactor-server', true);
+const refactoring_server = client.getBooleanValue('refactor', true);
 
 
 refactoring_server.then(result => {
   if (result) {
-    console.log(`Server en plena refactorizacion.`);
-    process.exit(0);
+    // console.log(`Server en plena refactorizacion.`);
+    // process.exit(0);
+    //TODO: Starting refactor here
+
+    let chatServer = new ChatServer(new WebSocket.Server({ port: 8080 }))
+    chatServer.run();
 
   } else {
+    //NOTE: Codigo legacy a cambiar
+
+    console.log(`This flag should be tested and delete`);
+
     const server = new WebSocket.Server({
       port: 8080,
     });
@@ -60,8 +71,5 @@ refactoring_server.then(result => {
     });
 
   }
-
-
-
 })
 
