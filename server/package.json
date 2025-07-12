@@ -19,6 +19,8 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@openfeature/flagd-provider": "^0.13.3",
+    "@openfeature/server-sdk": "^1.18.0",
     "ws": "^8.18.2"
   },
   "devDependencies": {
