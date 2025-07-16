@@ -1,6 +1,6 @@
 {
   "flags": {
-    "refactor": {
+    "server-refactor": {
       "state": "ENABLED",
       "defaultVariant": "off",
       "variants": {

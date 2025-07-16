@@ -1,27 +1,28 @@
 import { WebSocket } from 'ws';
 import ConnectionManager from './core/chat/connectionManager';
 import { OpenFeature } from '@openfeature/server-sdk';
-import { FlagdProvider } from '@openfeature/flagd-provider';
 import { ChatServer } from './core/chat';
+import dotenv from 'dotenv';
+import { EnvVarProvider } from '@openfeature/env-var-provider';
 
 try {
-  OpenFeature.setProviderAndWait(new FlagdProvider({
-    port: 8013
-  }));
+  dotenv.config();
+  const host = process.env.FLAGD_HOST || 'flagd'
+  const port = Number(process.env.FLAGD_PORT) || 8013;
+
+  OpenFeature.setProvider(new EnvVarProvider())
+
 } catch (error) {
-  console.error(`Failed to initialize FlagdProvider: ${error}`);
+  console.error(`Failed to initialize EnvVarProvider: ${error}`);
 }
 
 const client = OpenFeature.getClient();
-const refactoring_server = client.getBooleanValue('refactor', true);
 
+async function startServer() {
+  if (await client.getBooleanValue('server-refactor', false)
+    && await client.getObjectValue('environment', { env: 'dev' })) {
 
-refactoring_server.then(result => {
-  if (result) {
-    // console.log(`Server en plena refactorizacion.`);
-    // process.exit(0);
-    //TODO: Starting refactor here
-
+    console.log("New version of the server");
     const chatServer = new ChatServer(new WebSocket.Server({ port: 8080 }))
     chatServer.run();
 
@@ -69,7 +70,7 @@ refactoring_server.then(result => {
       });
 
     });
-
   }
-})
+}
 
+startServer();

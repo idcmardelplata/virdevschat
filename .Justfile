@@ -18,14 +18,20 @@ test-flagd:
     echo "Flagd esta ejecutandose correctamente"
   fi
 
-# Ejecuta algunas tareas e inicializa el servidor
+# Ejecuta algunas tareas e inicializa el servidor en modo desarrollo
 [working-directory: 'server']
 server: test-flagd
   npm install
   npm run clean
   npm run lint
   npm run test:unit
-  npm run server
+  npm run server:dev
 
-
+# Ejecuta tareas relacionadas al servidor en el CI
+server-ci:
+  dagger call linter --source server
+  dagger call test --source server
+  dagger call testendtoend --source server
+  dagger call build_for_production --source server
+  # dagger call publish --source server
 

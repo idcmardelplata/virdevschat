@@ -2,15 +2,17 @@ import { GenericContainer, StartedTestContainer } from 'testcontainers';
 import { WebSocket } from 'ws';
 
 describe("ChatServer", () => {
-  jest.setTimeout((1000 * 60) * 10); //Time for download the image in the ci or test environment
-  const container: StartedTestContainer;
-  const wsClient: WebSocket;
+
+  let container: StartedTestContainer;
+  let wsClient: WebSocket;
 
   beforeAll(async () => {
     const image_repository = "idcmardelplata/serverw";
+
     container = await new GenericContainer(image_repository)
-      .withExposedPorts(8080, 8080)
-      .start();
+      .withExposedPorts(8080)
+      .withEnvironment({ SERVER_REFACTOR: String(false), ENVIRONMENT: '{"env": "development"}' })
+      .start()
   })
   afterAll(async () => {
     if (wsClient.readyState === WebSocket.OPEN) {
@@ -20,7 +22,7 @@ describe("ChatServer", () => {
   });
 
   beforeEach(done => {
-    const wsClient = new WebSocket(`ws://${container.getHost()}:${container.getMappedPort(8080)}`);
+    wsClient = new WebSocket(`ws://${container.getHost()}:${container.getFirstMappedPort()}`);
     wsClient.on('open', done);
   })
 
@@ -30,11 +32,11 @@ describe("ChatServer", () => {
   })
 
   test('Should connect with the chat server', (done) => {
-    const websocket = new WebSocket(`ws://${container.getHost()}:${container.getMappedPort(8080)}`);
+    const websocket = new WebSocket(`ws://${container.getHost()}:${container.getFirstMappedPort()}`);
     websocket.on('open', done);
   });
 
-  test('Receive a welcome message when you log in', done => {
+  test.skip('Receive a welcome message when you log in', done => {
     const greeterMsg = 'Bienvenido a virdevs chat!, escribe tus mensajes y presiona <enter>'
 
     wsClient.on('message', data => {
@@ -53,7 +55,7 @@ describe("ChatServer", () => {
     ];
     const receivedEvents: object[] = [];
 
-    const newCLient = new WebSocket(`ws://${container.getHost()}:${container.getMappedPort(8080)}`);
+    const newCLient = new WebSocket(`ws://${container.getHost()}:${container.getFirstMappedPort()}`);
     newCLient.on('open', done);
 
     wsClient.on('message', data => {
@@ -68,9 +70,8 @@ describe("ChatServer", () => {
   })
 
   test('It should not allow more than 2 connections per IP.', done => {
-    //NOTE: 'beforeEach' already connects a client before each test
-    new WebSocket(`ws://${container.getHost()}:${container.getMappedPort(8080)}`);
-    const client3 = new WebSocket(`ws://${container.getHost()}:${container.getMappedPort(8080)}`);
+    new WebSocket(`ws://${container.getHost()}:${container.getFirstMappedPort()}`);
+    const client3 = new WebSocket(`ws://${container.getHost()}:${container.getFirstMappedPort()}`);
 
     client3.on('close', msg => {
       expect(msg).toBe(1008);

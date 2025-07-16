@@ -21,7 +21,6 @@ export class Chat {
    * Build nodejs image with dependencies inside.
    * This image is build for developer environment only and not should be used in production.
    */
-  // @func()
   private buildContainer(source: Directory): Container {
     return dag
       .container()
@@ -44,8 +43,8 @@ export class Chat {
   }
 
   @func('linter')
-  linter(source: Directory): Promise<string> {
-    return this
+  async linter(source: Directory): Promise<string> {
+    return await this
       .buildContainer(source)
       .withExec(["npm", "run", "lint"])
       .stdout()
@@ -104,20 +103,21 @@ export class Chat {
   async unittest(source: Directory): Promise<string> {
     return this
       .buildContainer(source)
-      .withExec(["npm", "run", "test"])
+      .withExec(["npm", "run", "test:unit"])
       .stdout()
   }
 
   @func()
-  testendtoend(source: Directory): Promise<string> {
-    return dag
+  async testendtoend(source: Directory): Promise<string> {
+    return await dag
       .testcontainers()
       .setup(this.buildContainer(source))
+      .withEnvVariable("SERVER_REFACTOR", "false")
+      .withEnvVariable("ENVIRONMENT", '{"env": "development"}')
       .withServiceBinding("chatServer", this.endtoendservice())
       .withExec(["npm", "run", "test:e2e"])
       .stdout();
   }
-
 
   @func()
   endtoendservice(): Service {
