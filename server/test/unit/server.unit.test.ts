@@ -5,8 +5,8 @@
 
 
 import { WebSocket } from 'ws';
-import { sendServerMessage } from '../../src/messages';
-import ConnectionManager from '../../src/connectionManager';
+import { sendServerMessage } from '../../src/core/chat/messages';
+import ConnectionManager from '../../src/core/chat/connectionManager';
 
 describe('Structure the messages that will be sender from the server', () => {
 
