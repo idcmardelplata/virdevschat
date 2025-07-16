@@ -3,8 +3,8 @@ import { WebSocket } from 'ws';
 
 describe("ChatServer", () => {
   jest.setTimeout((1000 * 60) * 10); //Time for download the image in the ci or test environment
-  let container: StartedTestContainer;
-  let wsClient: WebSocket;
+  const container: StartedTestContainer;
+  const wsClient: WebSocket;
 
   beforeAll(async () => {
     const image_repository = "idcmardelplata/serverw";
@@ -20,7 +20,7 @@ describe("ChatServer", () => {
   });
 
   beforeEach(done => {
-    wsClient = new WebSocket(`ws://${container.getHost()}:${container.getMappedPort(8080)}`);
+    const wsClient = new WebSocket(`ws://${container.getHost()}:${container.getMappedPort(8080)}`);
     wsClient.on('open', done);
   })
 

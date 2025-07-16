@@ -22,7 +22,7 @@ refactoring_server.then(result => {
     // process.exit(0);
     //TODO: Starting refactor here
 
-    let chatServer = new ChatServer(new WebSocket.Server({ port: 8080 }))
+    const chatServer = new ChatServer(new WebSocket.Server({ port: 8080 }))
     chatServer.run();
 
   } else {
@@ -38,10 +38,10 @@ refactoring_server.then(result => {
     console.log("Server running at: 8080");
 
     server.on('connection', (ws, req) => {
-      let ip = req.socket.remoteAddress ?? "";
+      const ip = req.socket.remoteAddress ?? "";
       manager.addConnection(ws, ip);
 
-      ws.on('message', (data: any) => {
+      ws.on('message', (data: string) => {
         try {
           const mensaje = JSON.parse(data);
           console.log(`Mensaje recibido: ${mensaje.texto}`)

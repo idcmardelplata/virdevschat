@@ -1,4 +1,4 @@
-import { RawData } from 'ws';
+import WebSocket, { RawData } from 'ws';
 import ConnectionManager from './connectionManager';
 import { IncomingMessage } from 'node:http';
 
@@ -13,8 +13,8 @@ export class ChatServer {
   }
 
   run() {
-    this.server.on('connection', (ws: any, req: IncomingMessage): void => {
-      let ip = req.socket.remoteAddress ?? "";
+    this.server.on('connection', (ws: WebSocket, req: IncomingMessage): void => {
+      const ip = req.socket.remoteAddress ?? "";
       this.manager.addConnection(ws, ip);
       console.log("Un nuevo usuario se ha conectado.")
 

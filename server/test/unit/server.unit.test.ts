@@ -11,20 +11,20 @@ import ConnectionManager from '../../src/core/chat/connectionManager';
 describe('Structure the messages that will be sender from the server', () => {
 
   test("Structure welcome message", () => {
-    let msg = JSON.parse(sendServerMessage("Welcome"));
+    const msg = JSON.parse(sendServerMessage("Welcome"));
     expect(msg.type).toBe("system");
     expect(msg.message).toBe("Bienvenido a virdevs chat!, escribe tus mensajes y presiona <enter>");
   });
 
   test("Structure presentation message", () => {
-    let msg = JSON.parse(sendServerMessage("Presentation", 2));
+    const msg = JSON.parse(sendServerMessage("Presentation", 2));
 
     expect(msg.type).toBe("system");
     expect(msg.message).toBe(`Usuario se ha conectado. Total conectados 2`);
   });
 
   test("Structure disconnected message", () => {
-    let msg = JSON.parse(sendServerMessage("Disconnected", 2));
+    const msg = JSON.parse(sendServerMessage("Disconnected", 2));
 
     expect(msg.type).toBe("system");
     expect(msg.message).toBe(`Usuario se ha desconectado. Total conectados 2`);
@@ -50,7 +50,7 @@ describe('Make a connection manager', () => {
   test("Not allow more that 2 connections for ip", () => {
 
     const wsClient3 = { ...wsClient };
-    let manager = new ConnectionManager(2);
+    const manager = new ConnectionManager(2);
     for (let i = 0; i < 3; i++) {
       manager.addConnection(wsClient, '10.10.12.127');
     }
@@ -61,26 +61,26 @@ describe('Make a connection manager', () => {
 
   test("Should send notifications about new user to all users in the chat", () => {
 
-    let manager = new ConnectionManager(2);
+    const manager = new ConnectionManager(2);
     for (let i = 0; i < 10; i++) {
       manager.addConnection({ ...wsClient }, `168.254.0.${Math.random() * 254}`);
     }
 
     expect(manager.getClients().length).toBe(10);
 
-    let randomClient = manager.getClients()[Math.round(Math.random() * 10)];
+    const randomClient = manager.getClients()[Math.round(Math.random() * 10)];
     expect(randomClient).toEqual({ ...wsClient });
     expect(randomClient.send).toHaveBeenCalled();
   })
 
   test("Should notify when a client is disconnected", () => {
-    let manager = new ConnectionManager(2);
+    const manager = new ConnectionManager(2);
     for (let i = 0; i < 10; i++) {
       manager.addConnection({ ...wsClient }, `168.254.0.${Math.random() * 254}`);
     }
 
-    let randomClient = manager.getClients()[Math.round(Math.random() * 10)];
-    let randomClient2 = manager.getClients()[Math.round(Math.random() * 2)];
+    const randomClient = manager.getClients()[Math.round(Math.random() * 10)];
+    const randomClient2 = manager.getClients()[Math.round(Math.random() * 2)];
     randomClient.close(1008);
     expect(randomClient2.send).toHaveBeenCalled();
   })

@@ -18,18 +18,18 @@ export default class ConnectionManager {
     this.connections.set(ip, (this.connections.get(ip) || 0) + 1);
     this.clients.add(ws);
     //TODO: Combinar esto con la logica de sendServerMessage
-    this.broadcast(sendServerMessage('Presentation', this.clients.size));
+    this.broadcast(JSON.parse(sendServerMessage('Presentation', this.clients.size)));
   }
 
   getClients() {
     return [...this.clients];
   }
 
-  broadcast(message: {}) {
-    let parsedMsg = JSON.stringify(message);
+  broadcast(message: object) {
+    const parsedMsg = JSON.stringify(message);
     for (const client of this.clients) {
-      client.send(parsedMsg);
       if (client.readyState === WebSocket.OPEN) {
+        client.send(parsedMsg);
       }
     }
   }
@@ -38,7 +38,7 @@ export default class ConnectionManager {
     for (const socket of this.clients) {
       if (socket === ws) {
         this.clients.delete(socket);
-        this.broadcast(sendServerMessage('Disconnected', this.clients.size))
+        this.broadcast(JSON.parse(sendServerMessage('Disconnected', this.clients.size)));
       }
     }
   }

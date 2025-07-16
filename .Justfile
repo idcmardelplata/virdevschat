@@ -22,7 +22,8 @@ test-flagd:
 [working-directory: 'server']
 server: test-flagd
   npm install
-  # npm run lint
+  npm run clean
+  npm run lint
   npm run test:unit
   npm run server
 
