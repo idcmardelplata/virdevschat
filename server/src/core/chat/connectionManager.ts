@@ -17,8 +17,13 @@ export default class ConnectionManager {
     }
     this.connections.set(ip, (this.connections.get(ip) || 0) + 1);
     this.clients.add(ws);
-    //TODO: Combinar esto con la logica de sendServerMessage
-    this.broadcast(JSON.parse(sendServerMessage('Presentation', this.clients.size)));
+    //DONE: Combinar esto con la logica de sendServerMessage
+    ws.send(sendServerMessage("Welcome", this.clients.size));
+    this.clients.forEach((client) => {
+      if (client !== ws) {
+        client.send(sendServerMessage("Presentation", this.clients.size));
+      }
+    });
   }
 
   getClients() {
@@ -38,7 +43,9 @@ export default class ConnectionManager {
     for (const socket of this.clients) {
       if (socket === ws) {
         this.clients.delete(socket);
-        this.broadcast(JSON.parse(sendServerMessage('Disconnected', this.clients.size)));
+        this.broadcast(
+          JSON.parse(sendServerMessage("Disconnected", this.clients.size)),
+        );
       }
     }
   }
