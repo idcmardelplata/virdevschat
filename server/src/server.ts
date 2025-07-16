@@ -13,14 +13,10 @@ try {
 }
 
 const client = OpenFeature.getClient();
-const refactoring_server = client.getBooleanValue('refactor', true);
 
-
-refactoring_server.then(result => {
-  if (result) {
-    // console.log(`Server en plena refactorizacion.`);
-    // process.exit(0);
-    //TODO: Starting refactor here
+async function startServer() {
+  const devStage = process.env.NODE_ENV === 'development' ? true : false
+  if (await client.getBooleanValue('server-refactor', devStage)) {
 
     const chatServer = new ChatServer(new WebSocket.Server({ port: 8080 }))
     chatServer.run();
@@ -69,7 +65,7 @@ refactoring_server.then(result => {
       });
 
     });
-
   }
-})
+}
 
+startServer();

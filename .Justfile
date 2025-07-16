@@ -18,14 +18,11 @@ test-flagd:
     echo "Flagd esta ejecutandose correctamente"
   fi
 
-# Ejecuta algunas tareas e inicializa el servidor
+# Ejecuta algunas tareas e inicializa el servidor en modo desarrollo
 [working-directory: 'server']
 server: test-flagd
   npm install
   npm run clean
   npm run lint
   npm run test:unit
-  npm run server
-
-
-
+  npm run server:dev
