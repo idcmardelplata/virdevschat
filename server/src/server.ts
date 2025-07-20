@@ -7,9 +7,6 @@ import { EnvVarProvider } from '@openfeature/env-var-provider';
 
 try {
   dotenv.config();
-  const host = process.env.FLAGD_HOST || 'flagd'
-  const port = Number(process.env.FLAGD_PORT) || 8013;
-
   OpenFeature.setProvider(new EnvVarProvider())
 
 } catch (error) {

@@ -1,7 +1,8 @@
-import { GenericContainer, StartedTestContainer } from 'testcontainers';
+import { GenericContainer, StartedTestContainer, Wait } from 'testcontainers';
 import { WebSocket } from 'ws';
 
 describe("ChatServer", () => {
+  jest.setTimeout((10 * 60) * 100)
 
   let container: StartedTestContainer;
   let wsClient: WebSocket;
@@ -12,6 +13,7 @@ describe("ChatServer", () => {
     container = await new GenericContainer(image_repository)
       .withExposedPorts(8080)
       .withEnvironment({ SERVER_REFACTOR: String(false), ENVIRONMENT: '{"env": "development"}' })
+      .withWaitStrategy(Wait.forLogMessage(/Server running at/))
       .start()
   })
   afterAll(async () => {

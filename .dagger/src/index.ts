@@ -114,15 +114,8 @@ export class Chat {
       .setup(this.buildContainer(source))
       .withEnvVariable("SERVER_REFACTOR", "false")
       .withEnvVariable("ENVIRONMENT", '{"env": "development"}')
-      .withServiceBinding("chatServer", this.endtoendservice())
+      // .withServiceBinding("chatServer", this.endtoendservice())
       .withExec(["npm", "run", "test:e2e"])
       .stdout();
-  }
-
-  @func()
-  endtoendservice(): Service {
-    return dag
-      .testcontainers()
-      .dockerService()
   }
 }
