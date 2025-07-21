@@ -1,23 +1,25 @@
 import { WebSocket } from 'ws';
 import ConnectionManager from './core/chat/connectionManager';
 import { OpenFeature } from '@openfeature/server-sdk';
-import { FlagdProvider } from '@openfeature/flagd-provider';
 import { ChatServer } from './core/chat';
+import dotenv from 'dotenv';
+import { EnvVarProvider } from '@openfeature/env-var-provider';
 
 try {
-  OpenFeature.setProviderAndWait(new FlagdProvider({
-    port: 8013
-  }));
+  dotenv.config();
+  OpenFeature.setProvider(new EnvVarProvider())
+
 } catch (error) {
-  console.error(`Failed to initialize FlagdProvider: ${error}`);
+  console.error(`Failed to initialize EnvVarProvider: ${error}`);
 }
 
 const client = OpenFeature.getClient();
 
 async function startServer() {
-  const devStage = process.env.NODE_ENV === 'development' ? true : false
-  if (await client.getBooleanValue('server-refactor', devStage)) {
+  if (await client.getBooleanValue('server-refactor', false)
+    && await client.getObjectValue('environment', { env: 'dev' })) {
 
+    console.log("New version of the server");
     const chatServer = new ChatServer(new WebSocket.Server({ port: 8080 }))
     chatServer.run();
 
