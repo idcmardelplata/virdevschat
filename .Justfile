@@ -10,7 +10,7 @@ server:
   npm run lint
   npm run test:unit
   npm run server:dev
-
+#TODO: add just client command
 # Ejecuta tareas relacionadas al servidor en el CI
 server-ci:
   dagger call linter --source server
