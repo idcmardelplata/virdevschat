@@ -35,37 +35,34 @@ async function startServer() {
 
     console.log("Server running at: 8080");
 
-    server.on('connection', (ws, req) => {
+    server.on("connection", (ws, req) => {
       const ip = req.socket.remoteAddress ?? "";
       manager.addConnection(ws, ip);
 
-      ws.on('message', (data: string) => {
+      ws.on("message", (data: string) => {
         try {
           const mensaje = JSON.parse(data);
-          console.log(`Mensaje recibido: ${mensaje.texto}`)
+          console.log(`Mensaje recibido: ${mensaje.texto}`);
 
           manager.broadcast({
-            type: 'message',
+            type: "message",
             texto: mensaje.texto,
-            timestamp: new Date().toLocaleTimeString()
-          })
-
+            timestamp: new Date().toLocaleTimeString(),
+          });
         } catch (err) {
           console.error(`Error al procesar mensaje`, err);
         }
-
       });
 
-      ws.on('close', () => {
+      ws.on("close", () => {
+        const ip = req.socket.remoteAddress ?? "";
         console.log(`Cliente desconectado`);
-        manager.remove(ws);
+        manager.remove(ws, ip);
       });
 
-
-      ws.on('error', error => {
+      ws.on("error", (error) => {
         console.error(`Error en el websocket`, error);
       });
-
     });
   }
 }
