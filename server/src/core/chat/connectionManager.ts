@@ -39,10 +39,12 @@ export default class ConnectionManager {
     }
   }
 
-  remove(ws) {
+  remove(ws, ip: string) {
     for (const socket of this.clients) {
       if (socket === ws) {
         this.clients.delete(socket);
+        this.connections.set(ip, (this.connections.get(ip) || 0) - 1);
+
         this.broadcast(
           JSON.parse(sendServerMessage("Disconnected", this.clients.size)),
         );
